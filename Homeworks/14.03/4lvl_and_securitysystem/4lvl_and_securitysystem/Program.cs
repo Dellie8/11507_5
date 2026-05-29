@@ -84,7 +84,7 @@ class Program
 
         static void SaveToDatabase(User user)
         {
-            throw new Exception("Ошибка записи в базе данных");
+            throw new Exception("Ошибка записи в БД");
         }
 
         static void UpdateStatistics(User user)
@@ -136,7 +136,7 @@ class Program
                 NotifyCollectionChangedAction.Add)
             {
                 Console.WriteLine(
-                    "Запись добавлена в базу данных");
+                    "Запись добавлена в БД");
             }
         }
 
