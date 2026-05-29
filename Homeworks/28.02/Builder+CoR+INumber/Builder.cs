@@ -24,7 +24,7 @@ public class OrderBuilder : IIdStep
 
     public IPriceStep<T> SetId<T>(int id) where T : INumber<T> => new InternalBuilder<T>(id);
 
-    private class InternalBuilder<T>(int id) : IPriceStep<T>, IFinalStep<T> where T : INumber<T>
+    public class InternalBuilder<T>(int id) : IPriceStep<T>, IFinalStep<T> where T : INumber<T>
     {
         private T _price = T.Zero;
         public IFinalStep<T> SetBasePrice(T price) { _price = price; return this; }
@@ -69,4 +69,34 @@ public void Process<T>(Order<T> order) where T : INumber<T>
     tax.SetNext(validator);
 
     discount.Handle(order);
+}
+
+public class Program
+{
+    public static void Process<T>(Order<T> order)
+        where T : INumber<T>
+    {
+        var discount = new DiscountHandler<T>(T.CreateChecked(100));
+        var tax = new TaxHandler<T>();
+        var validator = new ValidationHandler<T>();
+
+        discount.SetNext(tax);
+        tax.SetNext(validator);
+
+        discount.Handle(order);
+    }
+
+    public static void Main()
+    {
+        var order = OrderBuilder.Create()
+            .SetId<decimal>(1)
+            .SetBasePrice(1000m)
+            .Build();
+
+        Console.WriteLine($"До обработки: {order.Price}");
+
+        Process(order);
+
+        Console.WriteLine($"После обработки: {order.Price}");
+    }
 }
