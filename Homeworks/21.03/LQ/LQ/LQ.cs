@@ -61,14 +61,14 @@ public static class LQ2_PointExtensions
         int[] dx = { -1, -1, -1, 0, 0, 1, 1, 1 };
         int[] dy = { -1, 0, 1, -1, 1, -1, 0, 1 };
         
-        var neighbors = points
-            .SelectMany(p => Enumerable.Range(0, 8)
-                .Select(i => new Point(p.X + dx[i], p.Y + dy[i])));
+        var sourcePoints = new HashSet<Point>(points);
         
         return points
-            .Concat(neighbors)
-            .Distinct()
-            .ToHashSet();
+        .SelectMany(p => Enumerable.Range(0, 8)
+            .Select(i => new Point(p.X + dx[i], p.Y + dy[i])))
+        .Where(p => !sourcePoints.Contains(p)) 
+        .Distinct()
+        .ToHashSet();
     }
 }
 
