@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Dota2
 {
@@ -20,6 +21,19 @@ namespace Dota2
             Level = 1;
         }
     }
+
+    public override string ToString()
+        {
+            return $@"Имя: {Name}
+Уровень: {Level}
+Сила: {Strength}
+Ловкость: {Agility}
+Интеллект: {Intelligence}
+Здоровье: {Health}
+Мана: {Mana}";
+        }
+    }
+
 
     public class StrengthHero : Hero
     {
@@ -62,35 +76,39 @@ namespace Dota2
 
    class Program
     {
+        static IEnumerable<Hero> GetHeroes()
+        {
+            yield return new StrengthHero("Destroyer");
+            yield return new IntelligenceHero("Herta");
+            yield return new AgilityHero("Joker");
+        }
+
         static void Main(string[] args)
         {
-            List<Hero> heroes = new List<Hero>()
-            {
-                new StrengthHero("Destroyer"),
-                new IntelligenceHero("Herta"),
-                new AgilityHero("Joker")
-            };
-
             string path = "heroes.txt";
+            IEnumerable<Hero> heroes = GetHeroes();
+
+            var strongHeroes = heroes.Where(h => h.Health > 500);
+
+            var smartHeroes = heroes.Where(h => h.Intelligence > 30);
 
             using (StreamWriter writer = new StreamWriter(path))
             {
-                foreach (Hero hero in heroes)
+                foreach (Hero hero in strongHeroes)
                 {
-                    writer.WriteLine($"Имя: {hero.Name}");
-                    writer.WriteLine($"Уровень: {hero.Level}");
-                    writer.WriteLine($"Сила: {hero.Strength}");
-                    writer.WriteLine($"Ловкость: {hero.Agility}");
-                    writer.WriteLine($"Интеллект: {hero.Intelligence}");
-                    writer.WriteLine($"Здоровье: {hero.Health}");
-                    writer.WriteLine($"Мана: {hero.Mana}");
-                    writer.WriteLine("------------------------");
+                    writer.WriteLine(hero);
                 }
             }
 
-            Console.WriteLine("Файл создан!");
+            Console.WriteLine("Файл создан!\n");
+            Console.WriteLine("Герои с интеллектом > 30:\n");
 
-            Console.WriteLine("\nСодержимое файла:\n");
+            foreach (Hero hero in smartHeroes)
+            {
+                Console.WriteLine(hero);
+            }
+
+            Console.WriteLine("Содержимое файла:\n");
 
             using (StreamReader reader = new StreamReader(path))
             {
@@ -102,5 +120,7 @@ namespace Dota2
                 }
             }
         }
+    }
+}
     }
 } 
